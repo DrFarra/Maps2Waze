@@ -1,0 +1,26 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.maps2waze'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.maps2waze'
+        minSdk 21
+        // 33 on purpose: sideloaded app, avoids Android 14 foreground-service-type rules
+        targetSdk 33
+        versionCode 1
+        versionName '1.0'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}
