@@ -93,11 +93,35 @@ public class LinkService extends Service implements Runnable {
             Log.i(TAG, "ignored: " + text);
             return;
         }
+        // Google Maps isn't usable as GPS on the head unit, so send Google links to Waze when we can read the destination.
+        String waze = LinkParser.toWaze(LinkParser.isShortLink(uri) ? expand(uri) : uri);
+        if (waze != null) uri = waze;
         try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         } catch (Exception e) {
             Log.w(TAG, "no app can open " + uri, e);
         }
+    }
+
+    /** Follows the redirects of a short link to the full Google Maps URL; returns the input if that fails. */
+    private static String expand(String url) {
+        try {
+            for (int i = 0; i < 5; i++) {
+                HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+                conn.setInstanceFollowRedirects(false);
+                // Google's short links redirect plain browsers straight to the full maps URL.
+                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+                conn.setConnectTimeout(10000);
+                conn.setReadTimeout(10000);
+                String next = conn.getHeaderField("Location");
+                conn.disconnect();
+                if (next == null) break;
+                url = new URL(new URL(url), next).toString();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "could not expand " + url, e);
+        }
+        return url;
     }
 
     private Notification notification() {
