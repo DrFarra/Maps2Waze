@@ -15,7 +15,9 @@ final class LinkParser {
     private static final Pattern COORDS = Pattern.compile(NUM + ",\\s*" + NUM);
     private static final Pattern PIN = Pattern.compile("!3d" + NUM + "!4d" + NUM);
     private static final Pattern AT = Pattern.compile("@" + NUM + "," + NUM);
-    private static final Pattern PATH = Pattern.compile("/maps/(?:place|search|dir)/(.+?)(?:/@|/data=|\\?|$)");
+    private static final Pattern PREVIEW = Pattern.compile("href=\"(/maps/preview/place\\?[^\"]+)\"");
+    private static final Pattern PLACE_LATLNG = Pattern.compile("\\[null,null," + NUM + "," + NUM + "\\]");
+    private static final Pattern PATH =Pattern.compile("/maps/(?:place|search|dir)/(.+?)(?:/@|/data=|\\?|$)");
 
     static String toUri(String text) {
         if (text == null || text.trim().isEmpty()) return null;
@@ -60,6 +62,22 @@ final class LinkParser {
         }
         m = AT.matcher(url); // map center: least precise, last resort
         return m.find() ? wazeCoords(m.group(1), m.group(2)) : null;
+    }
+
+    /** Path of Google's place-details request embedded in a maps page, or null. */
+    static String previewPath(String html) {
+        Matcher m = PREVIEW.matcher(html);
+        return m.find() ? m.group(1).replace("&amp;", "&") : null;
+    }
+
+    /** Waze link to the exact pin in Google's place-details data (first [null,null,lat,lng] is the place), or null. */
+    static String wazeFromPreview(String data) {
+        Matcher m = PLACE_LATLNG.matcher(data);
+        return m.find() ? wazeCoords(m.group(1), m.group(2)) : null;
+    }
+
+    static boolean isWazeSearch(String wazeUrl) {
+        return wazeUrl.startsWith("https://waze.com/ul?q=");
     }
 
     private static String wazeText(String text) {

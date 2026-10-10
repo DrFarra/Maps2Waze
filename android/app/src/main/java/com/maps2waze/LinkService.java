@@ -94,7 +94,13 @@ public class LinkService extends Service implements Runnable {
             return;
         }
         // Google Maps isn't usable as GPS on the head unit, so send Google links to Waze when we can read the destination.
-        String waze = LinkParser.toWaze(LinkParser.isShortLink(uri) ? expand(uri) : uri);
+        String full = LinkParser.isShortLink(uri) ? expand(uri) : uri;
+        String waze = LinkParser.toWaze(full);
+        if (waze != null && LinkParser.isWazeSearch(waze)) {
+            // Only an address/Plus Code in the link: ask Google for the exact pin so Waze lands on the same spot.
+            String exact = exactPlace(full);
+            if (exact != null) waze = exact;
+        }
         if (waze != null) uri = waze;
         try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -122,6 +128,32 @@ public class LinkService extends Service implements Runnable {
             Log.w(TAG, "could not expand " + url, e);
         }
         return url;
+    }
+
+    // shortcut: relies on Google's undocumented place-details data; if Google changes it we fall back to a Waze text search.
+    private static String exactPlace(String mapsUrl) {
+        try {
+            String path = LinkParser.previewPath(get(mapsUrl));
+            return path == null ? null : LinkParser.wazeFromPreview(get("https://www.google.com" + path));
+        } catch (Exception e) {
+            Log.w(TAG, "could not look up exact place", e);
+            return null;
+        }
+    }
+
+    private static String get(String url) throws Exception {
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(10000);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"))) {
+            StringBuilder sb = new StringBuilder();
+            char[] buf = new char[8192];
+            for (int n; (n = in.read(buf)) > 0; ) sb.append(buf, 0, n);
+            return sb.toString();
+        } finally {
+            conn.disconnect();
+        }
     }
 
     private Notification notification() {

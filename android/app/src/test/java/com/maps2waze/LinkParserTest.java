@@ -39,6 +39,19 @@ public class LinkParserTest {
     }
 
     @Test
+    public void exactPinFromGooglePlaceData() {
+        // excerpts of what Google returned for https://maps.app.goo.gl/sA9K1hhJ4cgV1b168
+        assertEquals("/maps/preview/place?authuser=0&hl=en&q=MGH2+7XQ&pb=%211m15",
+                LinkParser.previewPath("<head>  <link href=\"/maps/preview/place?authuser=0&amp;hl=en&amp;q=MGH2+7XQ&amp;pb=%211m15\" as=\"fetch\">"));
+        assertNull(LinkParser.previewPath("<html></html>"));
+        assertEquals("https://waze.com/ul?ll=-25.3218864,-57.4974467&navigate=yes", LinkParser.wazeFromPreview(
+                ")]}'\n[null,null,null,null,[[3606.47,-57.4974467,-25.3218864],[0,0,0]],null,[\"x\",[\"Av. Dr. Gabriel Pellón\"],"
+                        + "null,[null,null,-25.3218864,-57.4974467],\"0x945d\"],[[null,null,-25.32180807274841,-57.49761685160994]]"));
+        assertTrue(LinkParser.isWazeSearch("https://waze.com/ul?q=x&navigate=yes"));
+        assertFalse(LinkParser.isWazeSearch("https://waze.com/ul?ll=1.0,2.0&navigate=yes"));
+    }
+
+    @Test
     public void googleMapsToWaze() {
         // place pin beats the map center
         assertEquals("https://waze.com/ul?ll=19.4326077,-99.133208&navigate=yes", LinkParser.toWaze(
@@ -53,6 +66,9 @@ public class LinkParserTest {
                 LinkParser.toWaze("https://www.google.com/maps/dir/Mi+casa/Aeropuerto+CDMX/@19.4,-99.1,12z"));
         assertEquals("https://waze.com/ul?ll=19.4,-99.1&navigate=yes",
                 LinkParser.toWaze("https://www.google.com/maps/@19.4,-99.1,15z"));
+        // real expanded share link with a Plus Code: text search until the exact pin is looked up
+        assertEquals("https://waze.com/ul?q=MGH2%207XQ%2C%20Av.%20Dr.%20Gabriel%20Pell%C3%B3n%2C%20San%20Lorenzo%20111412&navigate=yes",
+                LinkParser.toWaze("https://maps.google.com/?q=MGH2+7XQ,+Av.+Dr.+Gabriel+Pell%C3%B3n,+San+Lorenzo+111412&ftid=0x945dae5b39c09ae7:0xe856f3e2f4a12a31&entry=gps&g_st=ic"));
         assertNull(LinkParser.toWaze("https://waze.com/ul?q=x"));
         assertNull(LinkParser.toWaze("https://maps.app.goo.gl/abc"));
     }
