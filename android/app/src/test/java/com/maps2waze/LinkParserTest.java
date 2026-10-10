@@ -36,6 +36,9 @@ public class LinkParserTest {
         assertTrue(LinkParser.isShortLink("https://maps.app.goo.gl/abc"));
         assertTrue(LinkParser.isShortLink("https://goo.gl/maps/abc"));
         assertFalse(LinkParser.isShortLink("https://www.google.com/maps/place/x"));
+        assertTrue(LinkParser.isGoogleLink("https://maps.app.goo.gl/dADNCRxp3H6dJ3oU7?g_st=com.apple.shortcuts.Run-Workflow.(null)"));
+        assertTrue(LinkParser.isGoogleLink("https://www.google.com/maps/place/x"));
+        assertFalse(LinkParser.isGoogleLink("https://waze.com/ul/h6gkzwgh"));
     }
 
     @Test

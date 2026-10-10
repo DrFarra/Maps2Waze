@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -102,14 +103,25 @@ public class LinkService extends Service implements Runnable {
             return;
         }
         // Google Maps isn't usable as GPS on the head unit, so send Google links to Waze when we can read the destination.
-        String full = LinkParser.isShortLink(uri) ? expand(uri) : uri;
+        String full = uri;
+        // Retry: the car's mobile data often drops for a moment, and a failed expansion loses the destination.
+        for (int i = 0; i < 3 && LinkParser.isShortLink(full); i++) {
+            if (i > 0) SystemClock.sleep(2000);
+            full = expand(uri);
+        }
         String waze = LinkParser.toWaze(full);
         if (waze != null && LinkParser.isWazeSearch(waze)) {
             // Only an address/Plus Code in the link: ask Google for the exact pin so Waze lands on the same spot.
             String exact = exactPlace(full);
             if (exact != null) waze = exact;
         }
-        if (waze != null) uri = waze;
+        if (waze != null) {
+            uri = waze;
+        } else if (LinkParser.isGoogleLink(uri)) {
+            // The radio has no Google Maps app: opening the Google link only pops up an app chooser.
+            toast("no pude leer la ubicación (¿sin internet?). Vuelve a mandarla");
+            return;
+        }
         String scheme = LinkParser.wazeScheme(uri);
         // Some head-unit Waze builds open but drop the destination of https links; their own scheme always works.
         if (scheme != null && start(new Intent(Intent.ACTION_VIEW, Uri.parse(scheme)).setPackage("com.waze"))) {

@@ -39,6 +39,11 @@ final class LinkParser {
         return host != null && (host.equals("goo.gl") || host.endsWith(".goo.gl"));
     }
 
+    static boolean isGoogleLink(String url) {
+        String host = host(url);
+        return isShortLink(url) || host != null && GOOGLE.matcher(host).matches();
+    }
+
     /** Waze link for the destination in a full Google Maps URL, or null if none can be found. */
     static String toWaze(String url) {
         String host = host(url);

@@ -38,7 +38,7 @@ En la app **Atajos** → **+** nuevo atajo, nombre "Mandar al auto":
 
 En WhatsApp (o Google Maps, Waze, Safari…): **Compartir** → **Mandar al auto**. En segundos se abre en la radio.
 
-- Enlaces de Google Maps (`maps.app.goo.gl`, `google.com/maps`…) se convierten y se abren en **Waze**. Si no se puede leer el destino, se abre el enlace original.
+- Enlaces de Google Maps (`maps.app.goo.gl`, `google.com/maps`…) se convierten y se abren en **Waze**. Si no se puede leer el destino (p. ej. sin internet), la radio muestra un aviso.
 - Texto sin enlace (p. ej. "Av. Reforma 222, CDMX") se busca en Waze.
 - Cualquier otro enlace se ignora, para que nadie pueda abrir sitios raros en tu auto.
 - Si mandas algo con la radio apagada, se abre al encenderla si fue hace menos de 10 minutos.
