@@ -111,7 +111,7 @@ public class LinkService extends Service implements Runnable {
         }
         PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class),
                 PendingIntent.FLAG_IMMUTABLE);
-        return b.setSmallIcon(android.R.drawable.ic_dialog_map)
+        return b.setSmallIcon(R.drawable.ic_fg)
                 .setContentTitle("Maps2Waze escuchando enlaces")
                 .setContentIntent(pi)
                 .build();

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Map pin with "sending" waves; drawn inside the 66dp adaptive-icon safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M54,34C45.2,34 38,41.2 38,50C38,62 54,76 54,76C54,76 70,62 70,50C70,41.2 62.8,34 54,34ZM48,50A6,6 0,1 0,60 50A6,6 0,1 0,48 50Z" />
+    <path
+        android:fillColor="#FF8A3D"
+        android:pathData="M49.5,50A4.5,4.5 0,1 0,58.5 50A4.5,4.5 0,1 0,49.5 50Z" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeAlpha="0.9"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M65,30.95A22,22 0,0 1,74.67 42.48M33.33,42.48A22,22 0,0 1,43 30.95" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeAlpha="0.55"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M68.5,24.89A29,29 0,0 1,81.25 40.08M26.75,40.08A29,29 0,0 1,39.5 24.89" />
+</vector>

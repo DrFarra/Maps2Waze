@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pre-Android 8 radios: round icon built from the same pieces. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <gradient android:angle="315" android:startColor="#1E3C72" android:endColor="#2F6FD6" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_fg" />
+</layer-list>
