@@ -17,7 +17,8 @@ final class LinkParser {
     private static final Pattern AT = Pattern.compile("@" + NUM + "," + NUM);
     private static final Pattern PREVIEW = Pattern.compile("href=\"(/maps/preview/place\\?[^\"]+)\"");
     private static final Pattern PLACE_LATLNG = Pattern.compile("\\[null,null," + NUM + "," + NUM + "\\]");
-    private static final Pattern PATH =Pattern.compile("/maps/(?:place|search|dir)/(.+?)(?:/@|/data=|\\?|$)");
+    private static final Pattern WAZE_UL = Pattern.compile("https://(?:www\\.)?waze\\.com/ul\\?(.+)");
+    private static final Pattern PATH = Pattern.compile("/maps/(?:place|search|dir)/(.+?)(?:/@|/data=|\\?|$)");
 
     static String toUri(String text) {
         if (text == null || text.trim().isEmpty()) return null;
@@ -74,6 +75,12 @@ final class LinkParser {
     static String wazeFromPreview(String data) {
         Matcher m = PLACE_LATLNG.matcher(data);
         return m.find() ? wazeCoords(m.group(1), m.group(2)) : null;
+    }
+
+    /** waze:// form of a waze.com/ul?... link (Waze reads its own scheme even when it ignores web links), or null. */
+    static String wazeScheme(String url) {
+        Matcher m = WAZE_UL.matcher(url);
+        return m.matches() ? "waze://?" + m.group(1) : null;
     }
 
     static boolean isWazeSearch(String wazeUrl) {

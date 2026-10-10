@@ -47,6 +47,11 @@ public class LinkParserTest {
         assertEquals("https://waze.com/ul?ll=-25.3218864,-57.4974467&navigate=yes", LinkParser.wazeFromPreview(
                 ")]}'\n[null,null,null,null,[[3606.47,-57.4974467,-25.3218864],[0,0,0]],null,[\"x\",[\"Av. Dr. Gabriel Pellón\"],"
                         + "null,[null,null,-25.3218864,-57.4974467],\"0x945d\"],[[null,null,-25.32180807274841,-57.49761685160994]]"));
+        assertEquals("waze://?ll=-25.3218864,-57.4974467&navigate=yes",
+                LinkParser.wazeScheme("https://waze.com/ul?ll=-25.3218864,-57.4974467&navigate=yes"));
+        assertEquals("waze://?q=Z%C3%B3calo&navigate=yes", LinkParser.wazeScheme("https://www.waze.com/ul?q=Z%C3%B3calo&navigate=yes"));
+        assertNull(LinkParser.wazeScheme("https://waze.com/ul/h6gkzwgh"));
+        assertNull(LinkParser.wazeScheme("https://maps.app.goo.gl/abc"));
         assertTrue(LinkParser.isWazeSearch("https://waze.com/ul?q=x&navigate=yes"));
         assertFalse(LinkParser.isWazeSearch("https://waze.com/ul?ll=1.0,2.0&navigate=yes"));
     }

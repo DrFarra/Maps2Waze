@@ -10,8 +10,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -102,11 +105,30 @@ public class LinkService extends Service implements Runnable {
             if (exact != null) waze = exact;
         }
         if (waze != null) uri = waze;
-        try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        } catch (Exception e) {
-            Log.w(TAG, "no app can open " + uri, e);
+        String scheme = LinkParser.wazeScheme(uri);
+        // Some head-unit Waze builds open but drop the destination of https links; their own scheme always works.
+        if (scheme != null && start(new Intent(Intent.ACTION_VIEW, Uri.parse(scheme)).setPackage("com.waze"))) {
+            toast("Abriendo en Waze: " + scheme.substring("waze://?".length()));
+            return;
         }
+        if (start(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)))) toast("Abriendo: " + uri);
+        else toast("Ninguna app puede abrir: " + uri);
+    }
+
+    private boolean start(Intent i) {
+        try {
+            startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            return true;
+        } catch (Exception e) {
+            Log.w(TAG, "could not open " + i.getData(), e);
+            return false;
+        }
+    }
+
+    /** Shown on the radio so the user can see what arrived and what was opened. */
+    private void toast(String msg) {
+        new Handler(Looper.getMainLooper()).post(() ->
+                Toast.makeText(getApplicationContext(), "Maps2Waze: " + Uri.decode(msg), Toast.LENGTH_LONG).show());
     }
 
     /** Follows the redirects of a short link to the full Google Maps URL; returns the input if that fails. */
