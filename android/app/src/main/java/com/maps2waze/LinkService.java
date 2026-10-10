@@ -91,6 +91,11 @@ public class LinkService extends Service implements Runnable {
     }
 
     private void open(String text) {
+        // ntfy fills in "triggered" when the request body was empty: the iPhone shortcut sent nothing.
+        if (text.isEmpty() || "triggered".equals(text)) {
+            toast("llegó un mensaje vacío; revisa el atajo del iPhone");
+            return;
+        }
         String uri = LinkParser.toUri(text);
         if (uri == null) {
             Log.i(TAG, "ignored: " + text);

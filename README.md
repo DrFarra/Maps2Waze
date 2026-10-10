@@ -25,10 +25,13 @@ La radio necesita internet (datos propios o el hotspot del iPhone).
 En la app **Atajos** → **+** nuevo atajo, nombre "Mandar al auto":
 
 1. Ajustes del atajo (ⓘ) → activa **Mostrar en hoja de compartir**; tipos: **URL** y **Texto**.
-2. Agrega la acción **Obtener contenido de URL**:
-   - URL: `https://ntfy.sh/TU-CANAL` (el canal de la radio)
+2. Agrega la acción **Obtener contenido de URL** (*Get Contents of URL*):
+   - URL: `https://ntfy.sh` (sin el canal)
    - Método: **POST**
-   - Cuerpo de la solicitud: **Archivo** → **Entrada del atajo**
+   - Cuerpo de la solicitud: **JSON**, con dos campos de tipo **Texto**:
+     - `topic` → tu canal (p. ej. `auto-3f9a1c...`)
+     - `message` → **Entrada del atajo**
+   - No uses cuerpo **Archivo**: el iPhone manda el enlace vacío y la radio solo recibe "triggered".
 3. (Opcional) Agrega **Mostrar notificación** "Enviado al auto".
 
 ## Uso
